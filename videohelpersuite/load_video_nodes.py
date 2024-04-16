@@ -119,7 +119,9 @@ def cv_frame_generator(video, force_rate, frame_load_cap, skip_first_frames,
 def load_video_cv(video: str, force_rate: int, force_size: str,
                   custom_width: int,custom_height: int, frame_load_cap: int,
                   skip_first_frames: int, select_every_nth: int,
-                  meta_batch=None, unique_id=None):
+                  meta_batch=None, unique_id=None, i=-1):
+    if i > -1:
+        skip_first_frames = i * frame_load_cap
     if meta_batch is None or unique_id not in meta_batch.inputs:
         gen = cv_frame_generator(video, force_rate, frame_load_cap, skip_first_frames,
                                  select_every_nth, meta_batch, unique_id)
@@ -187,7 +189,8 @@ class LoadVideoUpload:
                      "select_every_nth": ("INT", {"default": 1, "min": 1, "max": BIGMAX, "step": 1}),
                      },
                 "optional": {
-                    "meta_batch": ("VHS_BatchManager",)
+                    "meta_batch": ("VHS_BatchManager",),
+                    "i": ("INT", {"forceInput": True}),
                 },
                 "hidden": {
                     "unique_id": "UNIQUE_ID"
